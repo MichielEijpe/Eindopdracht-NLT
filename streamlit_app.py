@@ -61,7 +61,7 @@ st.dataframe(data)
 
 st.header("Visualisatie")
 enabled = st.radio("Visualisatie inschakelen (sneller) of uitschakelen (langzaam)",
-    ('Inschakelen', 'Uitschakelen'))
+    ('Inschakelen', 'Uitschakelen'), index=1)
 
 if enabled == 'Inschakelen':
   tab1, tab2= st.tabs(["Scatter Matrix", "Correlatie"])
