@@ -6,10 +6,17 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import sklearn as sk
-from sklearn.linear_model import LinearRegression
+
+# Dataset opsplitsen
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-import streamlit as st
+
+# R2 Score
+from sklearn.metrics import r2_score
+
+# Algoritmes
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
 
 st.set_page_config(
    page_title="Eindopdracht",
@@ -50,15 +57,6 @@ st.header("Datasets")
 st.subheader("Opbrengsten + Weergegevens")
 st.dataframe(data)
 
-
-
-# sns.displot(data=data, x="AMBIENT_TEMPERATURE", kde=True, bins = 100, height = 5, aspect = 3.5);
-# sns.displot(data=data, x="MODULE_TEMPERATURE", kde=True, bins = 100, height = 5, aspect = 3.5);
-
-
-
-
-
 st.header("Visualisatie")
 tab1, tab2= st.tabs(["Scatter Matrix", "Correlatie"])
 with tab1:
@@ -71,18 +69,38 @@ with tab2:
     sns.heatmap(data=correlation_matrix, annot=True)
     fig = plt.show()
     st.pyplot(fig)
-
 # X = data[['DAILY_YIELD','TOTAL_YIELD','AMBIENT_TEMPERATURE','MODULE_TEMPERATURE','IRRADIATION','DC_POWER']]
-X = data[['HOURS', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']]
+X = data[['HOURS', 'AMBIENT_TEMPERATURE']]
 Y = data['AC_POWER']
 X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
-LR = LinearRegression()
-LR.fit(X_train,Y_train)
 
-Y_predLR = LR.predict(X_test)
-r_score = LR.score(X_test, Y_test)
-print("R-squared score: ", r_score)
+tab1, tab2, tab3 = st.tabs(["Linear Regression", "Correlatie", "Decision Tree Regressor"])
+with tab1:
+  LR = LinearRegression()
+  LR.fit(X_train,Y_train)
+  Y_predLR = LR.predict(X_test)
+  LR_train, LR_test, LR_score = LR.score(X_train , Y_train), LR.score(X_test , Y_test), round(r2_score(Y_predLR,Y_test) * 100, 2)
 
-Y_predLR = LR.predict([[11, 28, 40]])
-print(Y_predLR)
+  st.write("R2 Score: ", LR_score,"%")
+  st.write(f"Training Score: ", LR_train)
+  st.write(f"Test Score: ", LR_test)
 
+with tab2:
+  RFR = RandomForestRegressor()
+  RFR.fit(X_train,Y_train)
+  Y_predRFR = RFR.predict(X_test)
+  RFR_train, RFR_test, RFR_score = RFR.score(X_train , Y_train), RFR.score(X_test , Y_test), round(r2_score(Y_predRFR,Y_test) * 100, 2)
+
+  st.write("R2 Score: ", RFR_score,"%")
+  st.write(f"Training Score: ", RFR_train)
+  st.write(f"Test Score: ", RFR_test)
+
+with tab3:
+  DTR = DecisionTreeRegressor()
+  DTR.fit(X_train,Y_train)
+  Y_predDTR = DTR.predict(X_test)
+  DTR_train, DTR_test, DTR_score = DTR.score(X_train , Y_train), DTR.score(X_test , Y_test), round(r2_score(Y_predDTR,Y_test) * 100, 2)
+
+  st.write("R2 Score: ", DTR_score,"%")
+  st.write(f"Training Score: ", DTR_train)
+  st.write(f"Test Score: ", DTR_test)
