@@ -169,4 +169,4 @@ elif 'Ambience Temperature' in options and 'Module Temperature' in options:
   st.write("Let op we hebben het hier over een omvormer, aan een omvormer zijn meerdere zonnepanelen gekoppeld. We zijn er later achter gekomen dat het bij onze dataset niet bekend is hoeveel m2 aan zonnepaneel aan één omvormer is gekoppeld waardoor we niet de gegenereerde energie per zonnepaneel of m2 zonnepaneel kunnen berekenen.")
 
 else:
-  st.write("Selecteer minimaal 1 waarde!")
+  st.write("Selecteer minimaal 1 waarde! Je kan niet alleen de Module Temperature kiezen!")
