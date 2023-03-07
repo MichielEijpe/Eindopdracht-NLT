@@ -18,6 +18,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
 
+import streamlit as st
+
 st.set_page_config(
    page_title="Eindopdracht",
    page_icon="🧊",
@@ -74,7 +76,9 @@ X = data[['HOURS', 'AMBIENT_TEMPERATURE']]
 Y = data['AC_POWER']
 X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
 
-tab1, tab2, tab3 = st.tabs(["Linear Regression", "Correlatie", "Decision Tree Regressor"])
+st.header("Regressie Algoritmes")
+
+tab1, tab2, tab3 = st.tabs(["Linear Regression", "Random Forest Regressor", "Decision Tree Regressor"])
 with tab1:
   LR = LinearRegression()
   LR.fit(X_train,Y_train)
@@ -104,3 +108,10 @@ with tab3:
   st.write("R2 Score: ", DTR_score,"%")
   st.write(f"Training Score: ", DTR_train)
   st.write(f"Test Score: ", DTR_test)
+  
+st.header("Voorspeltool")
+hour_input = st.number_input("Geef het uur waar de voorspelling voor gemaakt moet worden")
+amb_temp_input = st.number_input("Geef de verwachte temperatuur in dat uur (bijv. 30)")
+
+prediction = DTR.predict([[hour_input, amb_temp_input]])
+st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
