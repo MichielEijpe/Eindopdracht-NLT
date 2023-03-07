@@ -60,23 +60,31 @@ st.subheader("Opbrengsten + Weergegevens")
 st.dataframe(data)
 
 st.header("Visualisatie")
-tab1, tab2= st.tabs(["Scatter Matrix", "Correlatie"])
-with tab1:
-    pd.plotting.scatter_matrix(data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']), figsize=(15,15))
-    fig = plt.show()
-    st.pyplot(fig)
-with tab2:
-    plt.figure(figsize=(15,10))
-    correlation_matrix = data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']).corr()
-    sns.heatmap(data=correlation_matrix, annot=True)
-    fig = plt.show()
-    st.pyplot(fig)
-# X = data[['DAILY_YIELD','TOTAL_YIELD','AMBIENT_TEMPERATURE','MODULE_TEMPERATURE','IRRADIATION','DC_POWER']]
-X = data[['HOURS', 'AMBIENT_TEMPERATURE']]
+enabled = st.radio("Visualisatie inschakelen (sneller) of uitschakelen (langzaam)",
+    ('Inschakelen', 'Uitschakelen'))
+
+if enabled == 'Inschakelen':
+  tab1, tab2= st.tabs(["Scatter Matrix", "Correlatie"])
+  with tab1:
+      pd.plotting.scatter_matrix(data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']), figsize=(15,15))
+      fig = plt.show()
+      st.pyplot(fig)
+  with tab2:
+      plt.figure(figsize=(15,10))
+      correlation_matrix = data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']).corr()
+      sns.heatmap(data=correlation_matrix, annot=True)
+      fig = plt.show()
+      st.pyplot(fig)
+else:
+  st.write("De scatter matrix en correlatieheatmap zijn momenteel uitgeschakeld!")
+
+st.header("Regressie Algoritmes")
+st.write("Na een aantal tests blijkt de Decision Tree Regressor het best!")
+  # X = data[['DAILY_YIELD','TOTAL_YIELD','AMBIENT_TEMPERATURE','MODULE_TEMPERATURE','IRRADIATION','DC_POWER']]
+X = data[['HOURS', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']]
 Y = data['AC_POWER']
 X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
 
-st.header("Regressie Algoritmes")
 
 tab1, tab2, tab3 = st.tabs(["Linear Regression", "Random Forest Regressor", "Decision Tree Regressor"])
 with tab1:
@@ -116,12 +124,12 @@ options = st.multiselect(
     ['Ambience Temperature', 'Module Temperature'])
 
 if 'Ambience Temperature' in options:
-  amb_temp_input = st.number_input("Geef de verwachte temperatuur van de omgeving in dat uur (bijv. 30)")
+  amb_temp_input = st.number_input("Geef de verwachte temperatuur van de omgeving in dat uur (bijv. 30)", step=1)
 
 if 'Module Temperature' in options:
-  mod_temp_input = st.number_input("Geef de verwachte temperatuur van de zonnepaneel in dat uur (bijv. 30)")
+  mod_temp_input = st.number_input("Geef de verwachte temperatuur van de zonnepaneel in dat uur (bijv. 50)", step=1)
 
-hour_input = st.number_input("Geef het uur waar de voorspelling voor gemaakt moet worden")
+hour_input = st.number_input("Geef het uur waar de voorspelling voor gemaakt moet worden (bijv. 12 (uur))", step=1, max_value=24, min_value=0)
 
 DTR2 = DecisionTreeRegressor()
 
