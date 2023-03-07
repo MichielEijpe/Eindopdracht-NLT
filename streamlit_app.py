@@ -110,8 +110,37 @@ with tab3:
   st.write(f"Test Score: ", DTR_test)
   
 st.header("Voorspeltool")
-hour_input = st.number_input("Geef het uur waar de voorspelling voor gemaakt moet worden")
-amb_temp_input = st.number_input("Geef de verwachte temperatuur in dat uur (bijv. 30)")
 
-prediction = DTR.predict([[hour_input, amb_temp_input]])
+
+import streamlit as st
+
+options = st.multiselect(
+    'Welke gegevens weet je allemaal?',
+    ['Ambience Temperature', 'Module Temperature'])
+
+st.write('Je hebt gekozen:', options)
+if 'Ambience Temperature' in options:
+  amb_temp_input = st.number_input("Geef de verwachte temperatuur van de omgeving in dat uur (bijv. 30)")
+
+if 'Module Temperature' in options:
+  mod_temp_input = st.number_input("Geef de verwachte temperatuur van de zonnepaneel in dat uur (bijv. 30)")
+
+hour_input = st.number_input("Geef het uur waar de voorspelling voor gemaakt moet worden")
+
+DTR2 = DecisionTreeRegressor()
+
+if 'Ambience Temperature' in options and 'Module Temperature' not in options:
+  X = data[['HOURS', 'AMBIENT_TEMPERATURE']]
+  Y = data['AC_POWER']
+  X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
+  DTR2.fit(X_train,Y_train)
+  prediction = DTR2.predict([[hour_input, amb_temp_input]])
+
+elif 'Ambience Temperature' in options and 'Module Temperature' not in options:
+  X = data[['HOURS', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']]
+  Y = data['AC_POWER']
+  X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
+  DTR2.fit(X_train,Y_train)
+  prediction = DTR2.predict([[hour_input, amb_temp_input]])
+
 st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
