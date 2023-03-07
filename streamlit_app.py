@@ -140,18 +140,20 @@ DTR2 = DecisionTreeRegressor()
 if 'Ambience Temperature' in options and 'Module Temperature' not in options:
   x = data[['HOURS', 'AMBIENT_TEMPERATURE']]
   y = data['AC_POWER']
-  x_train,x_test,y_train,y_test = train_test_split(X,Y,test_size=.2)
+  x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=.2)
   DTR2.fit(x_train,y_train)
   prediction = DTR2.predict([[hour_input, amb_temp_input]])
-  st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
+  st.write("Hoogstwaarschijnlijk zal de omvormer " + str(prediction[0]) + " kW genereren!")
+  st.write("Let op we hebben het hier over een omvormer, aan een omvormer zijn meerdere zonnepanelen gekoppeld. We zijn er later achter gekomen dat het bij onze dataset niet bekend is hoeveel m2 aan zonnepaneel aan één omvormer is gekoppeld waardoor we niet de gegenereerde energie per zonnepaneel of m2 zonnepaneel kunnen berekenen.")
 
-elif 'Ambience Temperature' in options and 'Module Temperature' not in options:
-  x = data[['HOURS', 'AMBIENT_TEMPERATURE']]
+elif 'Ambience Temperature' in options and 'Module Temperature' in options:
+  x = data[['HOURS', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']]
   y = data['AC_POWER']
-  x_train,x_test,y_train,y_test = train_test_split(X,Y,test_size=.2)
+  x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=.2)
   DTR2.fit(x_train,y_train)
-  prediction = DTR2.predict([[hour_input, amb_temp_input]])
+  prediction = DTR2.predict([[hour_input, amb_temp_input, mod_temp_input]])
   st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
+  st.write("Let op we hebben het hier over een omvormer, aan een omvormer zijn meerdere zonnepanelen gekoppeld. We zijn er later achter gekomen dat het bij onze dataset niet bekend is hoeveel m2 aan zonnepaneel aan één omvormer is gekoppeld waardoor we niet de gegenereerde energie per zonnepaneel of m2 zonnepaneel kunnen berekenen.")
 
 else:
   st.write("Selecteer minimaal 1 waarde!")
