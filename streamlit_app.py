@@ -32,8 +32,10 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 with open("dataset.zip", 'wb') as file:
   file.write(rq.get("https://drive.google.com/uc?export=download&id=19Jdeh7zcbIq6SLQ3sLsGoSXpgccWBrtN").content)
 
-if os.path.isfile("/dataset.zip"):
+try:
   sh.unpack_archive("dataset.zip", "./", "zip")
+except:
+  print("Er is mogelijk iets misgegaan!")
 
 os.remove("./dataset.zip")
 
