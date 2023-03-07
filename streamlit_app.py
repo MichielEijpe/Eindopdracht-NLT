@@ -9,28 +9,25 @@ import sklearn as sk
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
+import streamlit as st
+
+st.set_page_config(
+   page_title="Eindopdracht",
+   page_icon="🧊",
+   layout="wide",
+   initial_sidebar_state="expanded",
+)
+st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
 with open("dataset.zip", 'wb') as file:
   file.write(rq.get("https://drive.google.com/uc?export=download&id=19Jdeh7zcbIq6SLQ3sLsGoSXpgccWBrtN").content)
 sh.unpack_archive("dataset.zip", "./", "zip")
+
 os.remove("./dataset.zip")
-for dir_name in ["generation", "weather"]:
-  if not os.path.exists(dir_name):
-      os.makedirs(dir_name)
-      print("Directory created successfully.")
-if not os.path.isfile("/content/generation/Plant_1_Generation_Data.csv"):
-  sh.move("/content/Plant_1_Generation_Data.csv", "generation")
-if not os.path.isfile("/content/generation/Plant_2_Generation_Data.csv"):
-  sh.move("/content/Plant_2_Generation_Data.csv", "generation")
-if not os.path.isfile("/content/weather/Plant_1_Weather_Sensor_Data.csv"):
-  sh.move("/content/Plant_1_Weather_Sensor_Data.csv", "weather")
-if not os.path.isfile("/content/weather/Plant_2_Weather_Sensor_Data.csv"):
-  sh.move("/content/Plant_2_Weather_Sensor_Data.csv", "weather")
 
-
-generation = pd.read_csv('/content/generation/Plant_1_Generation_Data.csv')
-weather = pd.read_csv('/content/weather/Plant_1_Weather_Sensor_Data.csv')
+generation = pd.read_csv('./Plant_1_Generation_Data.csv')
+weather = pd.read_csv('./Plant_1_Weather_Sensor_Data.csv')
 generation['DATE_TIME'] = pd.to_datetime(generation['DATE_TIME'],format = '%d-%m-%Y %H:%M')
 weather['DATE_TIME'] = pd.to_datetime(weather['DATE_TIME'],format = '%Y-%m-%d %H:%M:%S')
 data = pd.merge(generation.drop(columns = ['PLANT_ID']), weather.drop(columns = ['PLANT_ID', 'SOURCE_KEY']), on='DATE_TIME')
@@ -46,19 +43,34 @@ data['MINUTES'] = pd.to_datetime(data['TIME'],format='%H:%M:%S').dt.minute
 # data["DATE_STRING"] = data["DATE"].astype(str)
 # data["HOURS"] = data["HOURS"].astype(str)
 #data["TIME"] = data["TIME"].astype(str)
-data.head(5)
+st.title("NLT Eindopdracht - Opbrengste zonnepaneel voorspellen")
+st.caption("Michiel, Thijs, Beer, Gijs")
+st.header("Datasets")
+
+st.subheader("Opbrengsten + Weergegevens")
+st.dataframe(data)
 
 
 
 # sns.displot(data=data, x="AMBIENT_TEMPERATURE", kde=True, bins = 100, height = 5, aspect = 3.5);
 # sns.displot(data=data, x="MODULE_TEMPERATURE", kde=True, bins = 100, height = 5, aspect = 3.5);
 
-pd.plotting.scatter_matrix(data, figsize=(15,15))
-plt.show()
 
-corr = data.corr()
-corr.style.background_gradient(cmap='coolwarm')
 
+
+
+st.header("Visualisatie")
+tab1, tab2= st.tabs(["Scatter Matrix", "Correlatie"])
+with tab1:
+    pd.plotting.scatter_matrix(data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']), figsize=(15,15))
+    fig = plt.show()
+    st.pyplot(fig)
+with tab2:
+    plt.figure(figsize=(15,10))
+    correlation_matrix = data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']).corr()
+    sns.heatmap(data=correlation_matrix, annot=True)
+    fig = plt.show()
+    st.pyplot(fig)
 
 # X = data[['DAILY_YIELD','TOTAL_YIELD','AMBIENT_TEMPERATURE','MODULE_TEMPERATURE','IRRADIATION','DC_POWER']]
 X = data[['HOURS', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']]
