@@ -68,17 +68,31 @@ enabled = st.radio("Visualisatie inschakelen (sneller) of uitschakelen (langzaam
     ('Inschakelen', 'Uitschakelen'), index=1)
 
 if enabled == 'Inschakelen':
-  tab1, tab2= st.tabs(["Scatter Matrix", "Correlatie"])
+  tab1, tab2, tab3, tab4 = st.tabs(["Scatter Matrix", "Correlatie", "AC & DC plot", "Temp Plot"])
   with tab1:
-      pd.plotting.scatter_matrix(data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']), figsize=(15,15))
-      fig = plt.show()
-      st.pyplot(fig)
+    pd.plotting.scatter_matrix(data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']), figsize=(15,15))
+    fig = plt.show()
+    st.pyplot(fig)
   with tab2:
-      plt.figure(figsize=(15,10))
-      correlation_matrix = data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']).corr()
-      sns.heatmap(data=correlation_matrix, annot=True)
-      fig = plt.show()
-      st.pyplot(fig)
+    plt.figure(figsize=(15,10))
+    correlation_matrix = data.drop(columns = ['DAY', 'MONTH', 'WEEK', 'HOURS', 'MINUTES']).corr()
+    sns.heatmap(data=correlation_matrix, annot=True)
+    fig = plt.show()
+    st.pyplot(fig)
+  with tab3:
+    st.write("Y-as is het vermogen in kW")
+    data['time'] = data['DATE_TIME'].dt.time
+    plt.figure(figsize=(20,5))
+    data.set_index('time').drop('DATE_TIME',1)[['AC_POWER','DC_POWER']].plot()
+    fig = plt.show()
+    st.pyplot(fig)
+  with tab4:
+    st.write("Y-as is de temperatuur in graden Celcius")
+    data['time'] = data['DATE_TIME'].dt.time
+    plt.figure(figsize=(20,5))
+    data.set_index('time').drop('DATE_TIME',1)[['AMBIENT_TEMPERATURE','MODULE_TEMPERATURE']].plot()
+    fig = plt.show()
+    st.pyplot(fig)
 else:
   st.write("De scatter matrix en correlatieheatmap zijn momenteel uitgeschakeld!")
 
