@@ -111,14 +111,10 @@ with tab3:
   
 st.header("Voorspeltool")
 
-
-import streamlit as st
-
 options = st.multiselect(
     'Welke gegevens weet je allemaal?',
     ['Ambience Temperature', 'Module Temperature'])
 
-st.write('Je hebt gekozen:', options)
 if 'Ambience Temperature' in options:
   amb_temp_input = st.number_input("Geef de verwachte temperatuur van de omgeving in dat uur (bijv. 30)")
 
