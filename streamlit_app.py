@@ -135,6 +135,7 @@ if 'Ambience Temperature' in options and 'Module Temperature' not in options:
   X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
   DTR2.fit(X_train,Y_train)
   prediction = DTR2.predict([[hour_input, amb_temp_input]])
+  st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
 
 elif 'Ambience Temperature' in options and 'Module Temperature' not in options:
   X = data[['HOURS', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']]
@@ -142,5 +143,5 @@ elif 'Ambience Temperature' in options and 'Module Temperature' not in options:
   X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
   DTR2.fit(X_train,Y_train)
   prediction = DTR2.predict([[hour_input, amb_temp_input]])
+  st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
 
-st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
