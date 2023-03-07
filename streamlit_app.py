@@ -130,18 +130,20 @@ hour_input = st.number_input("Geef het uur waar de voorspelling voor gemaakt moe
 DTR2 = DecisionTreeRegressor()
 
 if 'Ambience Temperature' in options and 'Module Temperature' not in options:
-  X = data[['HOURS', 'AMBIENT_TEMPERATURE']]
-  Y = data['AC_POWER']
-  X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
-  DTR2.fit(X_train,Y_train)
+  x = data[['HOURS', 'AMBIENT_TEMPERATURE']]
+  y = data['AC_POWER']
+  x_train,x_test,y_train,y_test = train_test_split(X,Y,test_size=.2)
+  DTR2.fit(x_train,y_train)
   prediction = DTR2.predict([[hour_input, amb_temp_input]])
   st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
 
 elif 'Ambience Temperature' in options and 'Module Temperature' not in options:
-  X = data[['HOURS', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']]
-  Y = data['AC_POWER']
-  X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=.2)
-  DTR2.fit(X_train,Y_train)
+  x = data[['HOURS', 'AMBIENT_TEMPERATURE']]
+  y = data['AC_POWER']
+  x_train,x_test,y_train,y_test = train_test_split(X,Y,test_size=.2)
+  DTR2.fit(x_train,y_train)
   prediction = DTR2.predict([[hour_input, amb_temp_input]])
   st.write("Hoogstwaarschijnlijk zullen de zonnepanelen " + str(prediction[0]) + " kW genereren!")
 
+else:
+  st.write("Selecteer minimaal 1 waarde!")
