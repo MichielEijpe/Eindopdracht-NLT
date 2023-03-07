@@ -34,10 +34,9 @@ with open("dataset.zip", 'wb') as file:
 
 try:
   sh.unpack_archive("dataset.zip", "./", "zip")
+  os.remove("./dataset.zip")
 except:
   print("Er is mogelijk iets misgegaan!")
-
-os.remove("./dataset.zip")
 
 generation = pd.read_csv('./Plant_1_Generation_Data.csv')
 weather = pd.read_csv('./Plant_1_Weather_Sensor_Data.csv')
